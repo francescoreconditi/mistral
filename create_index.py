@@ -1,6 +1,6 @@
 from huggingface_hub import login
 
-login(token=None)
+login(token="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")
 
 from langchain_community.llms import Ollama
 from llama_index import (
@@ -10,11 +10,13 @@ from llama_index import (
 )
 from llama_index.embeddings import HuggingFaceEmbedding
 from llama_index.llms.langchain import LangChainLLM
-from langchain_community.llms import Ollama
 
 # Inizializza componenti
 llm = LangChainLLM(llm=Ollama(model="mistral"))
-embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embed_model = HuggingFaceEmbedding(
+    model_name="sentence-transformers/all-MiniLM-L6-v2",
+    device="cuda",  # Usa la GPU
+)
 service_context = ServiceContext.from_defaults(llm=llm, embed_model=embed_model)
 
 # Carica schema
