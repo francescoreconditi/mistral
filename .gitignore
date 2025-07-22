@@ -1,0 +1,51 @@
+# Bytecode e cache Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Virtual environment (modificare se usi un nome diverso)
+.venv/
+env/
+venv/
+
+# File di configurazione locali/editor
+*.log
+*.sqlite3
+.DS_Store
+*.swp
+*.bak
+*.tmp
+*.old
+*.orig
+
+# Config IDE (VSCode, PyCharm ecc.)
+.vscode/
+.idea/
+*.code-workspace
+
+# Ollama cache (se scaricato)
+~/.ollama/
+ollama_models/
+ollama.db
+
+# LlamaIndex: indice persistente
+db_index/
+
+# HuggingFace cache
+~/.cache/huggingface/
+.huggingface/
+
+# File temporanei di Streamlit
+.streamlit/
+
+# File di sistema
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# Export ZIP o build
+*.zip
+*.tar.gz
+dist/
+build/
