@@ -10,7 +10,6 @@ from llama_index import (
 )
 from llama_index.embeddings import HuggingFaceEmbedding
 from llama_index.llms.langchain import LangChainLLM
-from langchain_community.llms import Ollama
 
 # Inizializza componenti
 llm = LangChainLLM(llm=Ollama(model="mistral"))
@@ -18,6 +17,7 @@ embed_model = HuggingFaceEmbedding(model_name="sentence-transformers/all-MiniLM-
 service_context = ServiceContext.from_defaults(llm=llm, embed_model=embed_model)
 
 # Carica schema
+# Assicurati che il file schema.sql sia nella stessa cartella di questo script
 documents = SimpleDirectoryReader(input_files=["schema.sql"]).load_data()
 
 # Crea indice
