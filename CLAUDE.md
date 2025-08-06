@@ -1,75 +1,75 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Questo file fornisce indicazioni a Claude Code (claude.ai/code) quando lavora con il codice in questo repository.
 
-## Project Overview
+## Panoramica del Progetto
 
-This is a Mistral SQL Assistant application that uses LlamaIndex and Streamlit to create an interactive SQL query generation interface. The system builds and queries a persistent vector index from a SQL schema to provide intelligent SQL assistance.
+Questa è un'applicazione Mistral SQL Assistant che utilizza LlamaIndex e Streamlit per creare un'interfaccia interattiva di generazione di query SQL. Il sistema costruisce e interroga un indice vettoriale persistente da uno schema SQL per fornire assistenza SQL intelligente.
 
-## Architecture
+## Architettura
 
-- **main.py**: Streamlit web application that provides the user interface
-- **engine.py**: Contains the query engine loader that initializes LLM and embedding models
-- **create_index.py**: One-time script to build the vector index from the SQL schema
-- **schema.sql**: SQL schema file that serves as the knowledge base for the assistant
-- **db_index/**: Persistent storage directory for the LlamaIndex vector store
+- **main.py**: Applicazione web Streamlit che fornisce l'interfaccia utente
+- **engine.py**: Contiene il loader del query engine che inizializza i modelli LLM e di embedding
+- **create_index.py**: Script eseguito una sola volta per costruire l'indice vettoriale dallo schema SQL
+- **schema.sql**: File di schema SQL che serve come base di conoscenza per l'assistente
+- **db_index/**: Directory di storage persistente per il vector store di LlamaIndex
 
-## Technology Stack
+## Stack Tecnologico
 
-- **Frontend**: Streamlit web framework
-- **LLM**: Ollama with Mistral model (CPU-based)
-- **Embeddings**: HuggingFace sentence-transformers/all-MiniLM-L6-v2 (GPU-accelerated)
-- **Vector Store**: LlamaIndex VectorStoreIndex with persistent storage
-- **Package Manager**: uv (modern Python package manager)
+- **Frontend**: Framework web Streamlit
+- **LLM**: Ollama con modello Mistral (basato su CPU)
+- **Embeddings**: HuggingFace sentence-transformers/all-MiniLM-L6-v2 (accelerato GPU)
+- **Vector Store**: LlamaIndex VectorStoreIndex con storage persistente
+- **Package Manager**: uv (package manager Python moderno)
 
-## Development Commands
+## Comandi di Sviluppo
 
-### Environment Setup
+### Configurazione Ambiente
 ```bash
-uv sync                    # Install dependencies and sync environment
+uv sync                    # Installa dipendenze e sincronizza ambiente
 ```
 
-### Running the Application
+### Esecuzione dell'Applicazione
 ```bash
-uv run streamlit run main.py     # Start the Streamlit web application
+uv run streamlit run main.py     # Avvia l'applicazione web Streamlit
 ```
 
-### Index Management
+### Gestione Indice
 ```bash
-uv run python create_index.py    # Rebuild the vector index from schema.sql
+uv run python create_index.py    # Ricostruisce l'indice vettoriale da schema.sql
 ```
 
-### Package Management
+### Gestione Pacchetti
 ```bash
-uv add <package>          # Add a new dependency
-uv remove <package>       # Remove a dependency
-uv lock                   # Update the lockfile
+uv add <package>          # Aggiunge una nuova dipendenza
+uv remove <package>       # Rimuove una dipendenza
+uv lock                   # Aggiorna il lockfile
 ```
 
-## Key Components
+## Componenti Chiave
 
 ### Query Engine (engine.py:15)
-The `load_query_engine()` function initializes:
-- Ollama/Mistral LLM for text generation
-- HuggingFace embeddings with CUDA GPU acceleration
-- Persistent vector index loading from `./db_index`
+La funzione `load_query_engine()` inizializza:
+- LLM Ollama/Mistral per la generazione di testo
+- Embeddings HuggingFace con accelerazione GPU CUDA
+- Caricamento dell'indice vettoriale persistente da `./db_index`
 
-### Index Creation (create_index.py:23)
-Reads the SQL schema file and creates a searchable vector index that persists to disk for fast subsequent loads.
+### Creazione Indice (create_index.py:23)
+Legge il file di schema SQL e crea un indice vettoriale ricercabile che persiste su disco per caricamenti successivi veloci.
 
-### UI Features (main.py)
-- Real-time query generation with response timing
-- SQL code extraction and syntax highlighting
-- Query history with expandable responses
-- Copy-to-clipboard functionality for generated responses
+### Funzionalità UI (main.py)
+- Generazione di query in tempo reale con timing delle risposte
+- Estrazione del codice SQL e evidenziazione della sintassi
+- Cronologia delle query con risposte espandibili
+- Funzionalità di copia negli appunti per le risposte generate
 
-## Important Notes
+## Note Importanti
 
-- The application requires CUDA GPU for optimal embedding performance
-- Ollama must be installed separately and the Mistral model pulled
-- The vector index is built once and persists between sessions
-- HuggingFace token is hardcoded in engine.py and create_index.py (consider moving to environment variables)
+- L'applicazione richiede GPU CUDA per prestazioni ottimali degli embeddings
+- Ollama deve essere installato separatamente e il modello Mistral scaricato
+- L'indice vettoriale viene costruito una volta e persiste tra le sessioni
+- Il token HuggingFace viene caricato da variabili d'ambiente dal file .env
 
-## GPU Requirements
+## Requisiti GPU
 
-The embedding model is configured to use CUDA (`device="cuda"` in engine.py:22 and create_index.py:18). Ensure CUDA is available or modify to use CPU if needed.
+Il modello di embedding è configurato per usare CUDA (`device="cuda"` in engine.py:22 e create_index.py:18). Assicurati che CUDA sia disponibile o modifica per usare la CPU se necessario.
