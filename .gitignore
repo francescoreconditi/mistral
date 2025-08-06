@@ -1,57 +1,100 @@
-# Bytecode e cache Python
+# Python
 __pycache__/
 *.py[cod]
-*.pyo
-*.pyd
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
 
-# Virtual environment (modificare se usi un nome diverso)
-.venv/
+# Virtual Environments
+.env
+.venv
 env/
 venv/
+ENV/
+env.bak/
+venv.bak/
 
-# File di configurazione locali/editor
-*.log
-*.sqlite3
-.DS_Store
-*.swp
-*.bak
-*.tmp
-*.old
-*.orig
-
-# Config IDE (VSCode, PyCharm ecc.)
+# IDEs
 .vscode/
 .idea/
+*.swp
+*.swo
+*~
 *.code-workspace
 
-# Ollama cache (se scaricato)
-~/.ollama/
-ollama_models/
-ollama.db
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+desktop.ini
 
-# LlamaIndex: indice persistente
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Type checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Vector Store Data
+data/db_index/
 db_index/
 
 # HuggingFace cache
 ~/.cache/huggingface/
 .huggingface/
 
-# File temporanei di Streamlit
+# Ollama cache
+~/.ollama/
+ollama_models/
+ollama.db
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+*.old
+*.orig
+
+# Local configuration
+.env.local
+
+# Streamlit
 .streamlit/
 
-# File di sistema
-Thumbs.db
-ehthumbs.db
-desktop.ini
-
-# Export ZIP o build
+# Export/Build files
 *.zip
 *.tar.gz
-dist/
-build/
 
 # Claude
 .claude
-
-# File di environment con credenziali
-.env

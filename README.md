@@ -8,11 +8,33 @@ Questa è un'applicazione Mistral SQL Assistant che utilizza LlamaIndex e Stream
 
 ## 🏗️ Architettura
 
-- **main.py**: Applicazione web Streamlit che fornisce l'interfaccia utente
-- **engine.py**: Contiene il loader del query engine che inizializza i modelli LLM e di embedding
-- **create_index.py**: Script eseguito una sola volta per costruire l'indice vettoriale dallo schema SQL
-- **schema.sql**: File di schema SQL che serve come base di conoscenza per l'assistente
-- **db_index/**: Directory di storage persistente per il vector store di LlamaIndex
+### Struttura del Progetto
+```
+src/
+├── mistral/
+│   ├── config.py          # Configurazioni centrali
+│   ├── core/
+│   │   ├── engine.py      # Query engine logic
+│   │   └── indexer.py     # Index creation logic
+│   ├── ui/
+│   │   ├── app.py         # Streamlit app
+│   │   └── components.py  # UI components
+│   └── utils/
+│       └── auth.py        # HuggingFace auth
+tests/                     # Test suite
+scripts/                   # Entry point scripts
+data/
+├── schema.sql            # SQL schema
+└── db_index/             # Vector store
+```
+
+### Componenti Principali
+- **src/mistral/ui/app.py**: Applicazione web Streamlit principale
+- **src/mistral/core/engine.py**: Query engine con gestione LLM e embedding
+- **src/mistral/core/indexer.py**: Creazione dell'indice vettoriale
+- **src/mistral/config.py**: Configurazioni centralizzate
+- **data/schema.sql**: Schema SQL come base di conoscenza
+- **data/db_index/**: Storage persistente per il vector store
 
 ## 🔧 Stack Tecnologico
 
@@ -26,50 +48,142 @@ Questa è un'applicazione Mistral SQL Assistant che utilizza LlamaIndex e Stream
 
 ### 🔧 Configurazione Ambiente
 ```bash
-uv sync                    # Installa dipendenze e sincronizza ambiente
+# Installa dipendenze base
+uv sync
+
+# Installa dipendenze di sviluppo
+uv sync --extra dev
+
+# Copia e configura file di ambiente
+cp .env.example .env
+# Modifica .env con i tuoi token
 ```
 
 ### 🚀 Esecuzione dell'Applicazione
 ```bash
-uv run streamlit run main.py     # Avvia l'applicazione web Streamlit
+# Metodo 1: Usando gli script
+uv run python scripts/run_app.py
+
+# Metodo 2: Usando i console scripts
+mistral-app
+
+# Metodo 3: Streamlit diretto
+uv run streamlit run src/mistral/ui/app.py
 ```
 
 ### 📊 Gestione Indice
 ```bash
-uv run python create_index.py    # Ricostruisce l'indice vettoriale da schema.sql
+# Metodo 1: Usando gli script
+uv run python scripts/create_index.py
+
+# Metodo 2: Usando i console scripts
+mistral-create-index
+
+# Metodo 3: Modulo diretto
+uv run python -m mistral.core.indexer
 ```
 
 ### 📦 Gestione Pacchetti
 ```bash
-uv add <package>          # Aggiunge una nuova dipendenza
+uv add <package>          # Aggiunge dipendenza di produzione
+uv add --dev <package>    # Aggiunge dipendenza di sviluppo
 uv remove <package>       # Rimuove una dipendenza
 uv lock                   # Aggiorna il lockfile
 ```
 
+### 🧪 Testing e Quality
+```bash
+# Esegui test
+uv run pytest
+
+# Test con coverage
+uv run pytest --cov=mistral --cov-report=html
+
+# Linting e formatting
+uv run ruff check src/
+uv run ruff format src/
+
+# Type checking
+uv run mypy src/
+
+# Pre-commit hooks
+uv run pre-commit install
+uv run pre-commit run --all-files
+```
+
 ## ⚙️ Componenti Chiave
 
-### 🔍 Query Engine (engine.py:15)
+### 🔍 Query Engine (src/mistral/core/engine.py)
 La funzione `load_query_engine()` inizializza:
 - LLM Ollama/Mistral per la generazione di testo
-- Embeddings HuggingFace con accelerazione GPU CUDA
-- Caricamento dell'indice vettoriale persistente da `./db_index`
+- Embeddings HuggingFace con accelerazione GPU/CPU configurabile
+- Caricamento dell'indice vettoriale persistente da `data/db_index/`
+- Gestione centralizzata della configurazione e logging
 
-### 🗂️ Creazione Indice (create_index.py:23)
-Legge il file di schema SQL e crea un indice vettoriale ricercabile che persiste su disco per caricamenti successivi veloci.
+### 🗂️ Creazione Indice (src/mistral/core/indexer.py)
+- Legge il file di schema SQL da `data/schema.sql`
+- Crea un indice vettoriale ricercabile
+- Persiste su disco per caricamenti veloci successivi
+- Configurazione centralizzata e gestione errori
 
-### 🖥️ Funzionalità UI (main.py)
+### 🖥️ Interfaccia Utente (src/mistral/ui/)
+- **app.py**: Logica principale dell'applicazione Streamlit
+- **components.py**: Componenti UI modulari e riutilizzabili
 - Generazione di query in tempo reale con timing delle risposte
 - Estrazione del codice SQL e evidenziazione della sintassi
 - Cronologia delle query con risposte espandibili
 - Funzionalità di copia negli appunti per le risposte generate
 
+### ⚙️ Configurazione (src/mistral/config.py)
+- Configurazioni centralizzate con variabili d'ambiente
+- Validazione automatica dei settings
+- Gestione dei percorsi e delle directory
+- Supporto per diversi ambienti (dev/prod)
+
 ## ⚠️ Note Importanti
 
-- L'applicazione richiede GPU CUDA per prestazioni ottimali degli embeddings
-- Ollama deve essere installato separatamente e il modello Mistral scaricato
+### Prerequisiti
+- **Python**: 3.10 o superiore
+- **Ollama**: Deve essere installato separatamente con il modello Mistral
+- **HuggingFace Token**: Richiesto per accedere ai modelli di embedding
+
+### Configurazione
+- Copia `.env.example` in `.env` e configura i tuoi token
 - L'indice vettoriale viene costruito una volta e persiste tra le sessioni
-- Il token HuggingFace viene caricato da variabili d'ambiente dal file .env
+- Configurazione centralizzata tramite variabili d'ambiente
 
-## 🚀 Requisiti GPU
+### Prima Esecuzione
+1. Installa le dipendenze: `uv sync --extra dev`
+2. Configura il file `.env`
+3. Crea l'indice: `mistral-create-index`
+4. Avvia l'app: `mistral-app`
 
-Il modello di embedding è configurato per usare CUDA (`device="cuda"` in engine.py:22 e create_index.py:18). Assicurati che CUDA sia disponibile o modifica per usare la CPU se necessario.
+## 🚀 Requisiti Hardware
+
+### GPU (Raccomandato)
+Il modello di embedding è configurato per usare CUDA per prestazioni ottimali:
+- Configura `DEVICE=cuda` nel file `.env`
+- Assicurati che CUDA sia disponibile
+
+### CPU (Alternativa)
+Per sistemi senza GPU:
+- Configura `DEVICE=cpu` nel file `.env`
+- Le prestazioni saranno ridotte ma funzionali
+
+## 🏗️ Sviluppo
+
+### Struttura del Codice
+- **src/**: Codice sorgente principale
+- **tests/**: Test suite completa
+- **scripts/**: Script di utilità
+- **data/**: Dati e indici persistenti
+
+### Best Practices Implementate
+- ✅ Struttura standard con `src/` layout
+- ✅ Configurazione centralizzata
+- ✅ Logging strutturato
+- ✅ Test suite con pytest
+- ✅ Linting con ruff e mypy
+- ✅ Pre-commit hooks
+- ✅ Gestione errori robusta
+- ✅ Documentazione completa

@@ -1,0 +1,1 @@
+"""User interface components for Mistral SQL Assistant."""
