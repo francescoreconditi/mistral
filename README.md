@@ -1,7 +1,5 @@
 # README.md
 
-Questo file fornisce indicazioni a Claude Code (claude.ai/code) quando lavora con il codice in questo repository.
-
 ## 📋 Panoramica del Progetto
 
 Questa è un'applicazione Mistral SQL Assistant che utilizza LlamaIndex e Streamlit per creare un'interfaccia interattiva di generazione di query SQL. Il sistema costruisce e interroga un indice vettoriale persistente da uno schema SQL per fornire assistenza SQL intelligente.
@@ -177,13 +175,3 @@ Per sistemi senza GPU:
 - **tests/**: Test suite completa
 - **scripts/**: Script di utilità
 - **data/**: Dati e indici persistenti
-
-### Best Practices Implementate
-- ✅ Struttura standard con `src/` layout
-- ✅ Configurazione centralizzata
-- ✅ Logging strutturato
-- ✅ Test suite con pytest
-- ✅ Linting con ruff e mypy
-- ✅ Pre-commit hooks
-- ✅ Gestione errori robusta
-- ✅ Documentazione completa
