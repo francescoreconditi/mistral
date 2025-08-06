@@ -49,3 +49,6 @@ desktop.ini
 *.tar.gz
 dist/
 build/
+
+# Claude
+.claude
