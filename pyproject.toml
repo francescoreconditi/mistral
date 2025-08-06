@@ -10,5 +10,6 @@ dependencies = [
     "langchain_community",
     "sentence-transformers",
     "setuptools",
-    "huggingface-hub"
+    "huggingface-hub",
+    "python-dotenv>=1.1.1",
 ]
