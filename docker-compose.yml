@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  mistral-app:
+    build: .
+    ports:
+      - "8501:8501"
+    environment:
+      - PYTHONPATH=/app/src
+    volumes:
+      - ./data:/app/data
+      - ./src:/app/src
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Uncomment if you need a database
+  # database:
+  #   image: postgres:15
+  #   environment:
+  #     POSTGRES_DB: mistral
+  #     POSTGRES_USER: mistral
+  #     POSTGRES_PASSWORD: password
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   restart: unless-stopped
+
+# volumes:
+#   postgres_data:

@@ -44,7 +44,47 @@ data/
 
 ## ⚡ Comandi di Sviluppo
 
-### 🔧 Configurazione Ambiente
+### 🐳 Esecuzione con Docker (Raccomandato)
+
+#### 🚀 Quick Start
+```bash
+# Build e avvio dell'applicazione
+docker-compose up --build
+
+# Avvio in background
+docker-compose up -d
+
+# Visualizza logs
+docker-compose logs -f
+
+# Stop dell'applicazione
+docker-compose down
+```
+
+#### 📊 Gestione Indice con Docker
+```bash
+# Rigenerazione indice dopo modifiche a schema.sql
+docker-compose exec mistral-app uv run python scripts/create_index.py
+
+# Riavvio servizio (per ricaricare configurazioni)
+docker-compose restart mistral-app
+```
+
+#### 🔧 Utility Docker
+```bash
+# Accesso alla shell del container
+docker-compose exec mistral-app bash
+
+# Visualizza stato servizi
+docker-compose ps
+
+# Visualizza logs specifici
+docker-compose logs mistral-app
+```
+
+L'applicazione sarà disponibile su `http://localhost:8501`
+
+### 🔧 Configurazione Ambiente Locale
 ```bash
 # Installa dipendenze base
 uv sync
@@ -57,7 +97,7 @@ cp .env.example .env
 # Modifica .env con i tuoi token
 ```
 
-### 🚀 Esecuzione dell'Applicazione
+### 🚀 Esecuzione Locale
 ```bash
 # Metodo 1: Usando gli script
 uv run python scripts/run_app.py
@@ -151,6 +191,14 @@ La funzione `load_query_engine()` inizializza:
 - Configurazione centralizzata tramite variabili d'ambiente
 
 ### Prima Esecuzione
+
+#### 🐳 Con Docker (Raccomandato)
+1. Clona il repository
+2. Configura il file `.env` se necessario
+3. Avvia l'applicazione: `docker-compose up --build`
+4. Accedi all'app su `http://localhost:8501`
+
+#### 💻 Setup Locale
 1. Installa le dipendenze: `uv sync --extra dev`
 2. Configura il file `.env`
 3. Crea l'indice: `mistral-create-index`
@@ -168,6 +216,29 @@ Per sistemi senza GPU:
 - Configura `DEVICE=cpu` nel file `.env`
 - Le prestazioni saranno ridotte ma funzionali
 
+## 🐳 Docker
+
+### Struttura Docker
+Il progetto include una configurazione Docker completa:
+
+- **Dockerfile**: Container Python 3.11 con uv package manager
+- **docker-compose.yml**: Orchestrazione servizi con health check
+- **.dockerignore**: Ottimizzazione build context
+
+### Volumi e Persistenza
+I dati vengono persistiti attraverso volume mounting:
+```yaml
+volumes:
+  - ./data:/app/data  # Schema SQL e indici vettoriali
+  - ./src:/app/src    # Hot reload per sviluppo
+```
+
+### Caratteristiche
+- **Health Check**: Monitoraggio automatico dello stato dell'applicazione
+- **Non-root User**: Esecuzione sicura con utente dedicato
+- **Hot Reload**: Modifiche al codice sorgente si riflettono immediatamente
+- **Persistent Data**: Gli indici vettoriali sopravvivono ai restart del container
+
 ## 🏗️ Sviluppo
 
 ### Struttura del Codice
@@ -175,3 +246,5 @@ Per sistemi senza GPU:
 - **tests/**: Test suite completa
 - **scripts/**: Script di utilità
 - **data/**: Dati e indici persistenti
+- **Dockerfile**: Configurazione container
+- **docker-compose.yml**: Orchestrazione servizi
