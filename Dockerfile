@@ -13,8 +13,13 @@ RUN apt-get update && apt-get install -y \
 # Install uv for faster Python package management
 RUN pip install uv
 
+# Create non-root user
+RUN useradd --create-home --shell /bin/bash mistral
+RUN chown -R mistral:mistral /app
+USER mistral
+
 # Copy dependency files
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock README.md ./
 
 # Install dependencies using uv
 RUN uv sync --frozen
@@ -23,11 +28,6 @@ RUN uv sync --frozen
 COPY src/ ./src/
 COPY scripts/ ./scripts/
 COPY data/ ./data/
-
-# Create non-root user
-RUN useradd --create-home --shell /bin/bash mistral
-RUN chown -R mistral:mistral /app
-USER mistral
 
 # Expose Streamlit port
 EXPOSE 8501
