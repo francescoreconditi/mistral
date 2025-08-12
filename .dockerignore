@@ -44,6 +44,10 @@ ehthumbs.db
 Thumbs.db
 *.tmp
 
+# Environment files
+.env
+.env.*
+
 # Git
 .git
 .gitignore

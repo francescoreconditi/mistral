@@ -20,6 +20,7 @@ class Config:
     
     # Model Configuration
     OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "mistral")
+    OLLAMA_HOST: str = os.getenv("OLLAMA_HOST", "localhost:11434")
     EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2")
     
     # Vector Store Configuration

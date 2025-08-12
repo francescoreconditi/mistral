@@ -30,8 +30,8 @@ def create_index() -> None:
     config.validate()
     
     # Initialize components
-    logger.info(f"Initializing LLM with model: {config.OLLAMA_MODEL}")
-    llm = LangChainLLM(llm=Ollama(model=config.OLLAMA_MODEL))
+    logger.info(f"Initializing LLM with model: {config.OLLAMA_MODEL} at {config.OLLAMA_HOST}")
+    llm = LangChainLLM(llm=Ollama(model=config.OLLAMA_MODEL, base_url=f"http://{config.OLLAMA_HOST}"))
     
     logger.info(f"Initializing embedding model: {config.EMBEDDING_MODEL} on device: {config.DEVICE}")
     embed_model = HuggingFaceEmbedding(

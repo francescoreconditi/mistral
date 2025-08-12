@@ -8,6 +8,8 @@ services:
     environment:
       - PYTHONPATH=/app/src
     volumes:
+      # Mount .env file as read-only
+      - ./.env:/app/.env:ro
       - ./data:/app/data
       - ./src:/app/src
     restart: unless-stopped

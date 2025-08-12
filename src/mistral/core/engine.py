@@ -33,8 +33,8 @@ def load_query_engine() -> object:
     config.validate()
     
     # Initialize LLM
-    logger.info(f"Initializing LLM with model: {config.OLLAMA_MODEL}")
-    llm = LangChainLLM(llm=Ollama(model=config.OLLAMA_MODEL))
+    logger.info(f"Initializing LLM with model: {config.OLLAMA_MODEL} at {config.OLLAMA_HOST}")
+    llm = LangChainLLM(llm=Ollama(model=config.OLLAMA_MODEL, base_url=f"http://{config.OLLAMA_HOST}"))
     
     # Initialize embedding model
     logger.info(f"Initializing embedding model: {config.EMBEDDING_MODEL} on device: {config.DEVICE}")
