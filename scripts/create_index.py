@@ -12,7 +12,7 @@ sys.path.insert(0, str(src_path))
 def main() -> None:
     """Create the vector index."""
     from mistral.core.indexer import main as indexer_main
-    
+
     try:
         indexer_main()
     except Exception as e:

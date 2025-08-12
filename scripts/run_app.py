@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Entry point script for running the Streamlit application."""
 
-import sys
 import subprocess
+import sys
 from pathlib import Path
 
 # Add src to Python path
@@ -14,12 +14,18 @@ def main() -> None:
     """Run the Streamlit application."""
     try:
         # Run streamlit with the app module
-        subprocess.run([
-            "streamlit", "run", 
-            str(src_path / "mistral" / "ui" / "app.py"),
-            "--server.address", "localhost",
-            "--server.port", "8501"
-        ], check=True)
+        subprocess.run(
+            [
+                "streamlit",
+                "run",
+                str(src_path / "mistral" / "ui" / "app.py"),
+                "--server.address",
+                "localhost",
+                "--server.port",
+                "8501",
+            ],
+            check=True,
+        )
     except subprocess.CalledProcessError as e:
         print(f"Error running Streamlit app: {e}")
         sys.exit(1)

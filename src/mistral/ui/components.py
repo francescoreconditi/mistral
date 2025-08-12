@@ -53,13 +53,13 @@ def display_response_time(elapsed_time: float) -> None:
 
 def display_history(history: List[Dict[str, str]]) -> None:
     """Display query history with responses.
-    
+
     Args:
         history: List of query-response pairs
     """
     if not history:
         return
-        
+
     st.subheader("📜 Cronologia")
 
     for i, item in enumerate(reversed(history)):
@@ -68,22 +68,19 @@ def display_history(history: List[Dict[str, str]]) -> None:
 
             # Display full response in text area
             st.text_area(
-                "Risposta:", 
-                value=item["risposta"], 
-                height=200, 
-                key=f"txt_{i}"
+                "Risposta:", value=item["risposta"], height=200, key=f"txt_{i}"
             )
 
             # Extract and display SQL code blocks
             _display_sql_code_blocks(item["risposta"])
-            
+
             # Add copy button
             _add_copy_button(item["risposta"])
 
 
 def _display_sql_code_blocks(response: str) -> None:
     """Extract and display SQL code blocks from response.
-    
+
     Args:
         response: Response text containing potential SQL code blocks
     """
@@ -95,7 +92,7 @@ def _display_sql_code_blocks(response: str) -> None:
 
 def _add_copy_button(response: str) -> None:
     """Add copy button for response text.
-    
+
     Args:
         response: Response text to copy
     """
