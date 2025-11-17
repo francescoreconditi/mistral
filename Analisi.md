@@ -914,7 +914,7 @@ def authenticate_huggingface(token: Optional[str] = None) -> None:
 Nel file `.env`:
 
 ```ini
-HUGGINGFACE_TOKEN=...
+HUGGINGFACE_TOKEN=
 ```
 
 **Cos'è**: Token di accesso personale per l'API di HuggingFace
@@ -1045,7 +1045,7 @@ dev = [
 # ============================================
 # HuggingFace Configuration
 # ============================================
-HUGGINGFACE_TOKEN=...
+HUGGINGFACE_TOKEN=
 
 # ============================================
 # Device Configuration (cuda/cpu)
