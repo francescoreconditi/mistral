@@ -37,8 +37,8 @@ data/
 ## 🔧 Stack Tecnologico
 
 - **Frontend**: Framework web Streamlit
-- **LLM**: Ollama con modello Mistral (basato su CPU)
-- **Embeddings**: HuggingFace sentence-transformers/all-MiniLM-L6-v2 (accelerato GPU)
+- **LLM**: OpenAI GPT (gpt-4o-mini o gpt-4o via API)
+- **Embeddings**: OpenAI Embeddings (text-embedding-3-small via API)
 - **Vector Store**: LlamaIndex VectorStoreIndex con storage persistente
 - **Package Manager**: uv (package manager Python moderno)
 
@@ -182,13 +182,13 @@ La funzione `load_query_engine()` inizializza:
 
 ### Prerequisiti
 - **Python**: 3.10 o superiore
-- **Ollama**: Deve essere installato separatamente con il modello Mistral
-- **HuggingFace Token**: Richiesto per accedere ai modelli di embedding
+- **OpenAI API Key**: Richiesta per LLM e embeddings (https://platform.openai.com/api-keys)
 
 ### Configurazione
-- Copia `.env.example` in `.env` e configura i tuoi token
+- Copia `.env.example` in `.env` e configura la tua OpenAI API key
 - L'indice vettoriale viene costruito una volta e persiste tra le sessioni
 - Configurazione centralizzata tramite variabili d'ambiente
+- **Nota**: L'uso di OpenAI comporta costi API (~$0.08 per 1000 query con gpt-4o-mini)
 
 ### Prima Esecuzione
 
@@ -204,17 +204,15 @@ La funzione `load_query_engine()` inizializza:
 3. Crea l'indice: `mistral-create-index`
 4. Avvia l'app: `mistral-app`
 
-## 🚀 Requisiti Hardware
+## 💰 Costi Stimati
 
-### GPU (Raccomandato)
-Il modello di embedding è configurato per usare CUDA per prestazioni ottimali:
-- Configura `DEVICE=cuda` nel file `.env`
-- Assicurati che CUDA sia disponibile
+L'applicazione usa l'API OpenAI con i seguenti costi approssimativi:
 
-### CPU (Alternativa)
-Per sistemi senza GPU:
-- Configura `DEVICE=cpu` nel file `.env`
-- Le prestazioni saranno ridotte ma funzionali
+- **Creazione indice**: ~$0.0001 (una tantum)
+- **Per query**: ~$0.00008 con gpt-4o-mini
+- **1000 query/mese**: ~$0.08 (8 centesimi)
+
+I costi sono minimi per uso moderato. Nessun hardware speciale necessario!
 
 ## 🐳 Docker
 

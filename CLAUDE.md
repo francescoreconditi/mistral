@@ -8,8 +8,8 @@ This is a **Mistral SQL Assistant** - an AI-powered application that translates 
 
 **Tech Stack:**
 - **UI**: Streamlit web framework
-- **LLM**: Ollama (Mistral model, runs locally)
-- **Embeddings**: HuggingFace sentence-transformers (all-MiniLM-L6-v2)
+- **LLM**: OpenAI (GPT-4o-mini or GPT-4o via API)
+- **Embeddings**: OpenAI Embeddings (text-embedding-3-small via API)
 - **Vector Store**: LlamaIndex with disk persistence
 - **Package Manager**: uv (modern, fast Python package manager)
 
@@ -110,9 +110,14 @@ User Question → HF Embeddings → Semantic Search (vector store) →
 Retrieved Context + Question → Ollama LLM → Generated SQL
 ```
 
-### Critical Flow: Authentication Before Everything
+### Configuration Validation
 
-**IMPORTANT**: `auth.py::authenticate_huggingface()` MUST be called before any LLM or embedding operations. Both `engine.py::load_query_engine()` and `indexer.py::create_index()` call this as their first step.
+`config.py::validate()` is called early in both engine and indexer to verify:
+- `OPENAI_API_KEY` exists (required)
+- `data/schema.sql` exists
+- Creates necessary directories
+
+No separate authentication step needed - OpenAI uses API key directly.
 
 ### Configuration Validation
 
@@ -155,14 +160,9 @@ Two console scripts defined in `pyproject.toml`:
 ### Prerequisites
 
 1. **Python 3.10+** required
-2. **Ollama** must be installed separately with Mistral model:
-   ```bash
-   ollama pull mistral
-   ollama serve  # Must be running
-   ```
-3. **HuggingFace Token** required for embedding models:
-   - Get from https://huggingface.co/settings/tokens
-   - Set in `.env` file
+2. **OpenAI API Key** required:
+   - Get from https://platform.openai.com/api-keys
+   - Set in `.env` file as `OPENAI_API_KEY`
 
 ### Configuration
 
@@ -174,9 +174,10 @@ cp .env.example .env
 ```
 
 **Critical variables:**
-- `HUGGINGFACE_TOKEN` - **Required**, no default
-- `DEVICE` - `cuda` or `cpu` (default: `cpu`)
-- `OLLAMA_HOST` - Default: `host.docker.internal:11434` (Docker) or `localhost:11434` (local)
+- `OPENAI_API_KEY` - **Required**, no default
+- `OPENAI_MODEL` - Default: `gpt-4o-mini` (recommended for cost/performance)
+- `OPENAI_EMBEDDING_MODEL` - Default: `text-embedding-3-small`
+- `OPENAI_TEMPERATURE` - Default: `0.0` (deterministic for SQL generation)
 
 ### First-Time Setup
 
@@ -274,15 +275,19 @@ The LLM sees:
 
 To improve results, add guidance as SQL comments in `data/schema.sql`.
 
-### Switching Between CPU and GPU
+### Switching Between OpenAI Models
 
 Edit `.env`:
 ```bash
-# For GPU (faster embeddings)
-DEVICE=cuda
+# For cost optimization (recommended)
+OPENAI_MODEL=gpt-4o-mini          # ~$0.00008/query
 
-# For CPU (more compatible)
-DEVICE=cpu
+# For best quality
+OPENAI_MODEL=gpt-4o               # ~$0.0025/query
+
+# For embedding optimization
+OPENAI_EMBEDDING_MODEL=text-embedding-3-small  # Smaller, faster
+OPENAI_EMBEDDING_MODEL=text-embedding-3-large  # More accurate
 ```
 
-Restart application after change.
+**Note**: Changing embedding model requires regenerating the index.
