@@ -12,18 +12,13 @@ load_dotenv()
 class Config:
     """Central configuration for the application."""
 
-    # HuggingFace Configuration
-    HUGGINGFACE_TOKEN: Optional[str] = os.getenv("HUGGINGFACE_TOKEN")
-
-    # Device Configuration
-    DEVICE: str = os.getenv("DEVICE", "cuda")
-
-    # Model Configuration
-    OLLAMA_MODEL: str = os.getenv("OLLAMA_MODEL", "mistral")
-    OLLAMA_HOST: str = os.getenv("OLLAMA_HOST", "localhost:11434")
-    EMBEDDING_MODEL: str = os.getenv(
-        "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
+    # OpenAI Configuration
+    OPENAI_API_KEY: Optional[str] = os.getenv("OPENAI_API_KEY")
+    OPENAI_MODEL: str = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    OPENAI_EMBEDDING_MODEL: str = os.getenv(
+        "OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"
     )
+    OPENAI_TEMPERATURE: float = float(os.getenv("OPENAI_TEMPERATURE", "0.0"))
 
     # Vector Store Configuration
     VECTOR_STORE_DIR: Path = Path(os.getenv("VECTOR_STORE_DIR", "./data/db_index"))
@@ -40,8 +35,11 @@ class Config:
     @classmethod
     def validate(cls) -> None:
         """Validate configuration settings."""
-        if not cls.HUGGINGFACE_TOKEN:
-            raise ValueError("HUGGINGFACE_TOKEN environment variable is required")
+        if not cls.OPENAI_API_KEY:
+            raise ValueError(
+                "OPENAI_API_KEY environment variable is required. "
+                "Get your API key at https://platform.openai.com/api-keys"
+            )
 
         if not cls.SCHEMA_FILE.exists():
             raise FileNotFoundError(f"Schema file not found: {cls.SCHEMA_FILE}")

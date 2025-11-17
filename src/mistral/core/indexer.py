@@ -1,15 +1,12 @@
 """Vector index creation for Mistral SQL Assistant."""
 
 import logging
-from pathlib import Path
 
-from langchain_community.llms import Ollama
-from llama_index import ServiceContext, SimpleDirectoryReader, VectorStoreIndex
-from llama_index.embeddings import HuggingFaceEmbedding
-from llama_index.llms.langchain import LangChainLLM
+from llama_index.core import SimpleDirectoryReader, VectorStoreIndex, Settings
+from llama_index.embeddings.openai import OpenAIEmbedding
+from llama_index.llms.openai import OpenAI
 
 from mistral.config import config
-from mistral.utils.auth import authenticate_huggingface
 
 logger = logging.getLogger(__name__)
 
@@ -23,29 +20,29 @@ def create_index() -> None:
     """
     logger.info("Starting index creation...")
 
-    # Authenticate with HuggingFace
-    authenticate_huggingface()
-
     # Validate configuration
     config.validate()
 
-    # Initialize components
-    logger.info(
-        f"Initializing LLM with model: {config.OLLAMA_MODEL} at {config.OLLAMA_HOST}"
-    )
-    llm = LangChainLLM(
-        llm=Ollama(model=config.OLLAMA_MODEL, base_url=f"http://{config.OLLAMA_HOST}")
-    )
-
-    logger.info(
-        f"Initializing embedding model: {config.EMBEDDING_MODEL} on device: {config.DEVICE}"
-    )
-    embed_model = HuggingFaceEmbedding(
-        model_name=config.EMBEDDING_MODEL,
-        device=config.DEVICE,
+    # Initialize OpenAI LLM
+    logger.info(f"Initializing OpenAI LLM with model: {config.OPENAI_MODEL}")
+    llm = OpenAI(
+        model=config.OPENAI_MODEL,
+        api_key=config.OPENAI_API_KEY,
+        temperature=config.OPENAI_TEMPERATURE,
     )
 
-    service_context = ServiceContext.from_defaults(llm=llm, embed_model=embed_model)
+    # Initialize OpenAI embedding model
+    logger.info(
+        f"Initializing OpenAI embedding model: {config.OPENAI_EMBEDDING_MODEL}"
+    )
+    embed_model = OpenAIEmbedding(
+        model=config.OPENAI_EMBEDDING_MODEL,
+        api_key=config.OPENAI_API_KEY,
+    )
+
+    # Configure global settings
+    Settings.llm = llm
+    Settings.embed_model = embed_model
 
     # Load schema document
     logger.info(f"Loading schema from: {config.SCHEMA_FILE}")
@@ -53,7 +50,7 @@ def create_index() -> None:
 
     # Create index
     logger.info("Creating vector index...")
-    index = VectorStoreIndex.from_documents(documents, service_context=service_context)
+    index = VectorStoreIndex.from_documents(documents)
 
     # Persist index
     logger.info(f"Persisting index to: {config.VECTOR_STORE_DIR}")
