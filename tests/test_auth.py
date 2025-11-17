@@ -1,6 +1,11 @@
-"""Tests for authentication utilities."""
+"""Tests for authentication module.
 
-from unittest.mock import MagicMock, patch
+DEPRECATED: These tests are deprecated since migration to OpenAI.
+OpenAI uses OPENAI_API_KEY environment variable for authentication.
+"""
+
+import warnings
+from unittest.mock import patch
 
 import pytest
 
@@ -8,37 +13,29 @@ from mistral.utils.auth import authenticate_huggingface
 
 
 class TestAuthentication:
-    """Test authentication functionality."""
+    """Test suite for deprecated HuggingFace authentication."""
 
-    @patch("mistral.utils.auth.login")
-    @patch("mistral.utils.auth.config")
-    def test_authenticate_with_config_token(self, mock_config, mock_login):
-        """Test authentication using token from config."""
-        mock_config.HUGGINGFACE_TOKEN = "config_token"
+    def test_authenticate_shows_deprecation_warning(self):
+        """Test that authenticate_huggingface shows deprecation warning."""
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            authenticate_huggingface(token="test_token")
 
-        authenticate_huggingface()
+            assert len(w) == 1
+            assert issubclass(w[0].category, DeprecationWarning)
+            assert "deprecated" in str(w[0].message).lower()
+            assert "openai" in str(w[0].message).lower()
 
-        mock_login.assert_called_once_with(token="config_token")
-
-    @patch("mistral.utils.auth.login")
-    def test_authenticate_with_parameter_token(self, mock_login):
-        """Test authentication using token parameter."""
-        authenticate_huggingface(token="param_token")
-
-        mock_login.assert_called_once_with(token="param_token")
-
-    @patch("mistral.utils.auth.config")
-    def test_authenticate_no_token_raises_error(self, mock_config):
-        """Test authentication raises error when no token is available."""
-        mock_config.HUGGINGFACE_TOKEN = None
-
-        with pytest.raises(ValueError, match="HuggingFace token is required"):
+    def test_authenticate_does_not_raise_without_token(self):
+        """Test that authenticate_huggingface doesn't raise error (deprecated)."""
+        with warnings.catch_warnings(record=True):
+            warnings.simplefilter("always")
+            # Should not raise even without token since it's deprecated
             authenticate_huggingface()
 
-    @patch("mistral.utils.auth.login")
-    def test_authenticate_login_failure(self, mock_login):
-        """Test authentication handles login failure."""
-        mock_login.side_effect = Exception("Login failed")
-
-        with pytest.raises(Exception, match="Login failed"):
-            authenticate_huggingface(token="test_token")
+    def test_authenticate_with_parameter_token(self):
+        """Test that function accepts token parameter (backward compatibility)."""
+        with warnings.catch_warnings(record=True):
+            warnings.simplefilter("always")
+            # Should not raise
+            authenticate_huggingface(token="param_token")
