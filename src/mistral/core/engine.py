@@ -61,4 +61,6 @@ def load_query_engine() -> object:
     index = load_index_from_storage(storage_context=storage_context)
 
     logger.info("Query engine loaded successfully")
-    return index.as_query_engine()
+    # Use similarity_top_k=20 to ensure instruction sections are retrieved
+    # (empirical testing showed key instructions at positions 10-17)
+    return index.as_query_engine(similarity_top_k=20)
